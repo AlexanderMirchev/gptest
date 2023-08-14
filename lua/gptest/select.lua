@@ -1,6 +1,7 @@
 local select = {}
 
 local function get_selected_text()
+  -- TODO sometimes select fails
   local vstart = vim.fn.getpos("'<")
   local vend = vim.fn.getpos("'>")
 
@@ -8,7 +9,7 @@ local function get_selected_text()
   local line_end = vend[2]
 
   -- get all lines
-  local lines = vim.api.nvim_buf_get_lines(0, line_start-1, line_end, false)
+  local lines = vim.api.nvim_buf_get_lines(0, line_start - 1, line_end, false)
 
   -- remove text before the first line start
   lines[1] = string.sub(lines[1], vstart[3], -1)
@@ -24,6 +25,11 @@ local function get_selected_text()
   return table.concat(lines, '\n')
 end
 
+local function append_text_to_buffer(text, buffer)
+  vim.api.nvim_buf_set_lines(buffer, -1, -1, false, text)
+end
+
 select.get_selected_text = get_selected_text
+select.append_text_to_buffer = append_text_to_buffer
 
 return select

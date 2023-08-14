@@ -1,14 +1,13 @@
-local curl = require('plenary.curl')
+local curl = require("plenary.curl")
 
--- TODO add local api_key
 local a = {}
 
-a.getResponseFromGptApi = function(prompt)
+local function getResponseFromGptApi(prompt, api_key)
   local messages = {
     {
       role = "user",
-      content = prompt
-    }
+      content = prompt,
+    },
   }
 
   -- https://platform.openai.com/docs/guides/chat for more info
@@ -20,11 +19,11 @@ a.getResponseFromGptApi = function(prompt)
   }
 
   local body = vim.json.encode(request_body)
-  local headers = {["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. api_key}
+  local headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. api_key }
 
   local response_body = vim.json.decode(curl.post("https://api.openai.com/v1/chat/completions", {
-      headers = headers,
-      body = body,
+    headers = headers,
+    body = body,
   }).body)
 
   --TODO remove mock response
@@ -34,32 +33,14 @@ a.getResponseFromGptApi = function(prompt)
   return response_body
 end
 
-a.generateTestsForFunction = function (functionString)
-  local prompt = "I want you to write unit tests for my code ``" .. functionString
+a.generateTestsForCode = function(code, api_key)
+  local prompt = "I want you to write unit tests for my code ``"
+    .. code
     .. "``. Please only include the code without additional explainations"
-  local response_body = a.getResponseFromGptApi(prompt)
+  local response_body = getResponseFromGptApi(prompt, api_key)
   local tests = response_body.choices[1].message.content
 
-
-  --print(vim.json.encode(tests))
   return tests
 end
-
-local testFunctionString = [[export function getIsSearchResultInstrumentViewOnly(
-  searchResultInstrument: SearchInstrumentResultT,
-  isCfdInstrument: boolean,
-  tradingType: TradingTypeT,
-  dealer: DealerT
-): boolean {
-  return getIsPartialInstrumentViewOnly(
-    searchResultInstrument,
-    isCfdInstrument,
-    tradingType,
-    dealer
-  )
-}]]
-
---TODO remove run on require
-a.generateTestsForFunction(testFunctionString)
 
 return a
