@@ -4,18 +4,19 @@ local window = {}
 -- local buf = nil
 
 local function write_text_to_buf(text, buf)
-  --  vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(text, '\n'))
-  --  vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
-  --  vim.api.nvim_buf_set_option(buf, 'bufhidden', 'hide')
-  --  vim.api.nvim_buf_set_option(buf, 'swapfile', false)
-  --  vim.api.nvim_buf_set_option(buf, 'buflisted', false)
-  --  vim.api.nvim_buf_set_option(buf, 'filetype', 'gptext')
-  --  vim.api.nvim_buf_set_option(buf, 'modifiable', false)
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(text, "\n"))
 end
 
-local function open_window_with_buffer()
+local function open_window_with_buffer(filetype)
   local buf = vim.api.nvim_create_buf(false, true)
+
+  -- vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(text, '\n'))
+  -- vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
+  -- vim.api.nvim_buf_set_option(buf, 'bufhidden', 'hide')
+  -- vim.api.nvim_buf_set_option(buf, 'swapfile', false)
+  -- vim.api.nvim_buf_set_option(buf, 'buflisted', false)
+  vim.api.nvim_buf_set_option(buf, "filetype", filetype)
+  -- vim.api.nvim_buf_set_option(buf, 'modifiable', false)
 
   -- TODO make better
   local win = vim.api.nvim_open_win(buf, true, {

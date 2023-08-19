@@ -1,4 +1,5 @@
 local curl = require("plenary.curl")
+local async = require("plenary.async")
 
 local a = {}
 
@@ -37,10 +38,14 @@ a.generateTestsForCode = function(code, api_key)
   local prompt = "I want you to write unit tests for my code ``"
     .. code
     .. "``. Please only include the code without additional explainations"
-  local response_body = getResponseFromGptApi(prompt, api_key)
-  local tests = response_body.choices[1].message.content
+  -- local response_body = getResponseFromGptApi(prompt, api_key)
+  -- local tests = response_body.choices[1].message.content
+  --
+  -- return tests
 
-  return tests
+  async.util.sleep(3000)
+
+  return code
 end
 
 return a
