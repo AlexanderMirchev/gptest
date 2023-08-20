@@ -11,7 +11,6 @@ local function generate_tests_for_highlighted_code(api_key)
     local filetype = vim.bo.filetype
 
     local tests = request.generateTestsForCode(text, api_key)
-
     -- TODO use win and buf for closing the buffers
     local buf, win = window.open_window_with_buffer(filetype)
 
