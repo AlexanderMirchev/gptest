@@ -1,6 +1,10 @@
 local framework_config = {}
 
 local function get_framework_for_language(language)
+  if framework_config == nil then
+    return nil
+  end
+
   return framework_config[language]
 end
 
