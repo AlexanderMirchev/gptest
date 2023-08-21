@@ -1,6 +1,6 @@
 local generate_tests = require("gptest.generate_tests")
+local framework_config = require("gptest.framework_config")
 
--- local isPromptOpen = false
 local config = {}
 
 local gptest = {}
@@ -11,6 +11,7 @@ gptest.setup = function(userConfig)
   end
 
   config = userConfig
+  framework_config.set_framework_config(userConfig.framework_config)
 end
 
 local function gen_test()
