@@ -1,8 +1,5 @@
 local window = {}
 
--- local opened_window = nil
--- local buf = nil
-
 local function write_text_to_buf(text, buf)
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(text, "\n"))
 end
@@ -10,44 +7,28 @@ end
 local function open_window_with_buffer(filetype)
   local buf = vim.api.nvim_create_buf(false, true)
 
-  -- vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(text, '\n'))
-  -- vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
-  -- vim.api.nvim_buf_set_option(buf, 'bufhidden', 'hide')
-  -- vim.api.nvim_buf_set_option(buf, 'swapfile', false)
-  -- vim.api.nvim_buf_set_option(buf, 'buflisted', false)
+  vim.api.nvim_buf_set_option(buf, "buftype", "nofile")
+  vim.api.nvim_buf_set_option(buf, "bufhidden", "hide")
+  vim.api.nvim_buf_set_option(buf, "swapfile", false)
+  vim.api.nvim_buf_set_option(buf, "buflisted", false)
   vim.api.nvim_buf_set_option(buf, "filetype", filetype)
-  -- vim.api.nvim_buf_set_option(buf, 'modifiable', false)
 
-  -- TODO make better
+  local win_width = vim.fn.winwidth(0) * 0.6
+  local win_height = vim.fn.winheight(0) * 0.6
+
+  local win_row = (vim.fn.winheight(0) - win_height) / 2
+  local win_col = (vim.fn.winwidth(0) - win_width) / 2
+
   local win = vim.api.nvim_open_win(buf, true, {
     relative = "editor",
-    width = 80,
-    height = 20,
-    col = 0,
-    row = 0,
-    style = "minimal",
+    row = win_row,
+    col = win_col,
+    width = 100,
+    height = 50,
+    border = "rounded",
   })
 
   vim.api.nvim_set_current_buf(buf)
-
-  -- vim.api.nvim_win_set_option(opened_window, "winhl", "Normal:Normal")
-  -- vim.api.nvim_win_set_option(opened_window, "wrap", false)
-  -- vim.api.nvim_win_set_option(opened_window, "number", false)
-  -- vim.api.nvim_win_set_option(opened_window, "relativenumber", false)
-  -- vim.api.nvim_win_set_option(opened_window, "cursorline", false)
-  -- vim.api.nvim_win_set_option(opened_window, "signcolumn", "no")
-  -- vim.api.nvim_win_set_option(opened_window, "foldenable", false)
-  -- vim.api.nvim_win_set_option(opened_window, "foldcolumn", "0")
-  -- vim.api.nvim_win_set_option(opened_window, "conceallevel", 0)
-  -- vim.api.nvim_win_set_option(opened_window, "scrolloff", 0)
-  -- vim.api.nvim_win_set_option(opened_window, "sidescrolloff", 0)
-  -- vim.api.nvim_win_set_option(opened_window, "colorcolumn", "")
-  -- vim.api.nvim_win_set_option(opened_window, "winhighlight", "")
-  -- vim.api.nvim_win_set_option(opened_window, "cursorcolumn", false)
-  -- vim.api.nvim_win_set_option(opened_window, "cursorline", false)
-  -- vim.api.nvim_win_set_option(opened_window, "signcolumn", "no")
-  -- vim.api.nvim_win_set_option(opened_window, "spell", false)
-  -- vim.api.nvim_win_set_option(opened_window, "list", false)
 
   return buf, win
 end
