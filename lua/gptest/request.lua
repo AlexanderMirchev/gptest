@@ -25,6 +25,7 @@ local function getResponseFromGptApi(prompt, api_key)
   local response_body = vim.json.decode(curl.post("https://api.openai.com/v1/chat/completions", {
     headers = headers,
     body = body,
+    timeout = 30000,
   }).body)
 
   return response_body
@@ -32,10 +33,10 @@ end
 
 a.generateTestsForCode = function(code, api_key, framework)
   local prompt = "I want you to write unit tests using "
-      .. (framework or "default")
-      .. " framework for my code ``"
-      .. code
-      .. "``. Please only include the code without explanations, along with the testing framework used comment."
+    .. (framework or "default")
+    .. " framework for my code ``"
+    .. code
+    .. "``. Please only include the code without explanations, along with the testing framework used comment."
   local response_body = getResponseFromGptApi(prompt, api_key)
   local tests = response_body.choices[1].message.content
 
