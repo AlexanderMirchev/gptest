@@ -10,7 +10,7 @@ a new era of efficiency and accuracy in ensuring the robustness of your code.
 
 ## Getting started
 
-    * using packer:
+- using packer:
 
       use({
         "AlexanderMirchev/gptest.nvim",
@@ -26,12 +26,12 @@ as the default framework whenever generating tests for a .ts file). Not specifyi
 default to whatever the completion model deems most popular or adequate. Here is how you can setup
 the plugin (should be required in your configuration's init.lua):
 
-      local gptest = require("gptest")
+    local gptest = require("gptest")
 
-      gptest.setup({
-        api_key = <your-api-key>, -- reqiured
-        framework_config = { ["typescript"] = "vitest" }, -- optional
-      })
+    gptest.setup({
+      api_key = <your-api-key>, -- reqiured
+      framework_config = { ["typescript"] = "vitest" }, -- optional
+    })
 
 ## Shortcuts
 
@@ -39,8 +39,8 @@ Using the plugin would require only 2 commands - gen_tests, which accepts select
 prompts a window for editing the generated tests, and copy_generated, which closes the
 window and puts the generated tests into your clipboard. Here are suggested keymaps:
 
-        vim.keymap.set("v", "<leader>gt", "<cmd>lua require('gptest').gen_test()<cr>")
-        vim.keymap.set("n", "<leader>cg", "<cmd>lua require('gptest').copy_generated()<cr>")
+    vim.keymap.set("v", "<leader>gt", "<cmd>lua require('gptest').gen_test()<cr>")
+    vim.keymap.set("n", "<leader>cg", "<cmd>lua require('gptest').copy_generated()<cr>")
 
 ## Contributions
 
