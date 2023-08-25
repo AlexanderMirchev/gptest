@@ -30,21 +30,26 @@ local function generate_tests_for_highlighted_code(api_key)
     buf = new_buf
     win = new_win
 
-    -- TODO attach buf nullifying on win close
-    -- vim.api.nvim_buf_attach(buf, false, {
-    --   on_detach = function(bufnr, winid)
-    --     if buf == bufnr then
-    --       buf = nil
-    --     end
-    --
-    --     if win == winid then
-    --       win = nil
-    --     end
-    --   end,
-    -- })
+    local target_bufnr = buf
+
+    vim.cmd(
+      string.format(
+        [[au BufWinLeave <buffer=%d> lua require("gptest.generate_tests").on_buffer_close(%d)]],
+        target_bufnr,
+        target_bufnr
+      )
+    )
 
     window.write_text_to_buf(tests, buf)
   end)
+end
+
+-- used in autocmd
+local function on_buffer_close(bufnr)
+  if bufnr == buf then
+    buf = nil
+    win = nil
+  end
 end
 
 local function get_generated_tests_and_close()
@@ -57,7 +62,6 @@ local function get_generated_tests_and_close()
   vim.api.nvim_buf_delete(buf, { force = true })
   buf = nil
 
-  -- vim.api.nvim_win_close(win, true)
   win = nil
 
   return text
@@ -65,4 +69,5 @@ end
 
 generate_tests.generate_tests_for_highlighted_code = generate_tests_for_highlighted_code
 generate_tests.get_generated_tests_and_close = get_generated_tests_and_close
+generate_tests.on_buffer_close = on_buffer_close
 return generate_tests

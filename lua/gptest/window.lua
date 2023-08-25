@@ -45,7 +45,6 @@ local function get_text_from_window_and_close(buf, opened_window)
   vim.api.nvim_buf_delete(buf, { force = true })
   buf = nil
 
-  -- vim.api.nvim_win_close(opened_window, true)
   opened_window = nil
   return text
 end
