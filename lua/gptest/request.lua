@@ -1,9 +1,15 @@
-local curl = require("plenary.curl")
+local Job = require("plenary.job")
 local async = require("plenary.async")
 
-local a = {}
+local request = {}
 
-local function getResponseFromGptApi(prompt, api_key)
+local function getResponseFromGptApi(code, filetype, framework, api_key, on_received)
+  local prompt = "I want you to write unit tests using "
+      .. (framework or "default")
+      .. " framework for my code ``"
+      .. code
+      .. "``. Please only include the code without explanations, along with the testing framework used comment."
+
   local messages = {
     {
       role = "user",
@@ -20,27 +26,29 @@ local function getResponseFromGptApi(prompt, api_key)
   }
 
   local body = vim.json.encode(request_body)
-  local headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. api_key }
 
-  local response_body = vim.json.decode(curl.post("https://api.openai.com/v1/chat/completions", {
-    headers = headers,
-    body = body,
-    timeout = 30000,
-  }).body)
-
-  return response_body
+  local job = Job:new({
+    command = "curl",
+    args = {
+      "-X",
+      "POST",
+      "--data",
+      body,
+      "--header",
+      "Authorization: Bearer " .. api_key,
+      "--header",
+      "Content-Type: application/json",
+      "https://api.openai.com/v1/chat/completions",
+    },
+    timeout = 15000,
+    on_exit = function(res)
+      local result = vim.json.decode(table.concat(res:result(), ""))
+      on_received(filetype, result.choices[1].message.content)
+    end,
+  })
+  job:start()
 end
 
-a.generateTestsForCode = function(code, api_key, framework)
-  local prompt = "I want you to write unit tests using "
-    .. (framework or "default")
-    .. " framework for my code ``"
-    .. code
-    .. "``. Please only include the code without explanations, along with the testing framework used comment."
-  local response_body = getResponseFromGptApi(prompt, api_key)
-  local tests = response_body.choices[1].message.content
+request.getResponseFromGptApi = getResponseFromGptApi
 
-  return tests
-end
-
-return a
+return request

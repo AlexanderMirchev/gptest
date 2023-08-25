@@ -4,7 +4,6 @@ local select = require("gptest.select")
 local window = require("gptest.window")
 local request = require("gptest.request")
 local framework_config = require("gptest.framework_config")
-local async = require("plenary.async")
 
 local buf = nil
 local win = nil
@@ -13,19 +12,8 @@ local function trim(s)
   return s:match("^()%s*$") and "" or s:match("^%s*(.*%S)")
 end
 
-local function generate_tests_for_highlighted_code(api_key)
-  if buf ~= nil and win ~= nil then
-    vim.notify("Generated test prompt already open", vim.log.levels.ERROR)
-    return
-  end
-
-  async.run(function()
-    local text = trim(select.get_selected_text())
-    local filetype = vim.bo.filetype
-    local framework = framework_config.get_framework_for_language(filetype)
-
-    local tests = request.generateTestsForCode(text, api_key, framework)
-
+local function on_tests_received(filetype, tests)
+  vim.schedule(function()
     local new_buf, new_win = window.open_window_with_buffer(filetype)
     buf = new_buf
     win = new_win
@@ -42,6 +30,19 @@ local function generate_tests_for_highlighted_code(api_key)
 
     window.write_text_to_buf(tests, buf)
   end)
+end
+
+local function generate_tests_for_highlighted_code(api_key)
+  if buf ~= nil and win ~= nil then
+    vim.notify("Generated test prompt already open", vim.log.levels.ERROR)
+    return
+  end
+
+  local text = trim(select.get_selected_text())
+  local filetype = vim.bo.filetype
+  local framework = framework_config.get_framework_for_language(filetype)
+
+  request.getResponseFromGptApi(text, filetype, framework, api_key, on_tests_received)
 end
 
 -- used in autocmd
