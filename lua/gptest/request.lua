@@ -5,10 +5,10 @@ local request = {}
 
 local function getResponseFromGptApi(code, filetype, framework, api_key, on_received)
   local prompt = "I want you to write unit tests using "
-      .. (framework or "default")
-      .. " framework for my code ``"
-      .. code
-      .. "``. Please only include the code without explanations, along with the testing framework used comment."
+    .. (framework or "default")
+    .. " framework for my code ``"
+    .. code
+    .. "``. Please only include the tests without explanations and quotation marks, along with the testing framework used comment."
 
   local messages = {
     {
@@ -23,6 +23,7 @@ local function getResponseFromGptApi(code, filetype, framework, api_key, on_rece
     messages = messages,
     -- max_tokens = 250,
     n = 1,
+    temperature = 0,
   }
 
   local body = vim.json.encode(request_body)
